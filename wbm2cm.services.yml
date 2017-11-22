@@ -1,0 +1,5 @@
+services:
+  wbm2cm.workflow_collector:
+    class: '\Drupal\wbm2cm\WorkflowCollector'
+    arguments:
+      - '@entity_type.manager'

@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function wbm2cm_install() {
+  if (\Drupal::moduleHandler()->moduleExists('workbench_moderation')) {
+    $filter = [
+      \Drupal::service('workbench_moderation.moderation_information'),
+      'isModeratableEntityType',
+    ];
+    $entity_types = array_filter(
+      \Drupal::entityTypeManager()->getDefinitions(),
+      $filter
+    );
+
+    $state = \Drupal::state();
+    $state->set('moderation_entity_types', array_keys($entity_types));
+    $workflows = \Drupal::service('wbm2cm.workflow_collector')->getWorkflows();
+    $state->set('moderation_workflows', $workflows);
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function wbm2cm_uninstall() {
+  \Drupal::state()->deleteMultiple([
+    'moderation_entity_types',
+    'moderation_workflows',
+  ]);
+}
